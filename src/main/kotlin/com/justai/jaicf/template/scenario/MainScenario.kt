@@ -46,8 +46,8 @@ object MainScenario : Scenario() {
                 reactions.say("Перехожу..." )
                 activator.caila?.run {
                     taskType = slots["task_type"].toString()
-                    slots["Name"]?.let {taskName = JsonLiteral(slots["1"].toString())}
-                    slots["Description"]?.let {taskDescription = JsonLiteral(slots["2"].toString())}
+                    slots["Name"]?.let {taskName = JsonLiteral(slots["Name"].toString())}
+                    slots["Description"]?.let {taskDescription = JsonLiteral(slots["Description"].toString())}
                     slots["sentiment"]?.let {taskSentiment = JsonLiteral(slots["sentiment"]?.toBoolean()!!)}
                     slots["difficulty"]?. let {taskDifficulty = JsonLiteral(slots["difficulty"].toString())}
                 }

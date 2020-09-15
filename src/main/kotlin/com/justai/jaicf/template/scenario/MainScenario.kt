@@ -36,7 +36,7 @@ object MainScenario : Scenario() {
                 intent("createTask")
             }
             action {
-                val taskType = activator.getCailaSlot("task_type").asJsonLiteralOr("todo")
+                val taskType = activator.getCailaSlot("task_type").asJsonLiteralOr("")
                 reactions.say("Перехожу...")
                 reactions.aimybox?.response?.action = "createTask"
                 reactions.aimybox?.response?.intent = taskType.toString()

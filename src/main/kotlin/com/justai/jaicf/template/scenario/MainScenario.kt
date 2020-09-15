@@ -36,15 +36,15 @@ object MainScenario : Scenario() {
                 intent("createTask")
             }
             action {
-                val taskType = activator.getCailaSlot("task_type").asJsonLiteralOr("")
+                val taskType = activator.getCailaSlot("taskType").asJsonLiteralOr("")
                 reactions.say("Перехожу...")
                 reactions.aimybox?.response?.action = "createTask"
                 reactions.aimybox?.response?.intent = taskType.toString()
                 reactions.aimybox?.response?.run {
-                    data["taskName"] = activator.getCailaRequiredSlot("Name").asJsonLiteralOr("Название задачи")
-                    data["taskDescription"] = activator.getCailaRequiredSlot("Description").asJsonLiteralOr("Описание задачи")
-                    data["taskSentiment"] = activator.getCailaSlotBool("sentiment").asJsonLiteralOr(true)
-                    data["taskDifficulty"] = activator.getCailaSlot("difficulty").asJsonLiteralOr("easy")
+                    data["taskName"] = activator.getCailaRequiredSlot("taskName").asJsonLiteralOr("Название задачи")
+                    data["taskDescription"] = activator.getCailaRequiredSlot("taskDescription").asJsonLiteralOr("Описание задачи")
+                    data["taskSentiment"] = activator.getCailaSlotBool("taskSentiment").asJsonLiteralOr(true)
+                    data["taskDifficulty"] = activator.getCailaSlot("taskDifficulty").asJsonLiteralOr("easy")
                 }
             }
         }

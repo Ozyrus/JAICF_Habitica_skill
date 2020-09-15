@@ -3,6 +3,7 @@ package com.justai.jaicf.template.scenario
 import com.justai.jaicf.activator.caila.caila
 import com.justai.jaicf.channel.aimybox.AimyboxEvent
 import com.justai.jaicf.channel.aimybox.aimybox
+import com.justai.jaicf.context.ActivatorContext
 import com.justai.jaicf.model.scenario.Scenario
 import kotlinx.serialization.json.*
 
@@ -24,12 +25,9 @@ object MainScenario : Scenario() {
                 intent("changeView")
             }
             action {
-                reactions.say("Перехожу..." )
-                var slot = ""
-                activator.caila?.run {slot = slots["views"].toString()}
+                reactions.say("Перехожу...")
                 reactions.aimybox?.response?.action = "changeView"
-                reactions.aimybox?.response?.intent = slot
-
+                reactions.aimybox?.response?.intent = activator.getCailaSlot("views")
             }
         }
 
@@ -38,37 +36,39 @@ object MainScenario : Scenario() {
                 intent("createTask")
             }
             action {
-                var taskType = ""
-                var taskName:JsonLiteral? = JsonLiteral("Название задачи")
-                var taskDescription:JsonLiteral? = JsonLiteral("Описание задачи")
-                var taskSentiment:JsonLiteral? = JsonLiteral(true)
-                var taskDifficulty:JsonLiteral? = JsonLiteral("easy")
-                reactions.say("Перехожу..." )
-                activator.caila?.run {
-                    taskType = slots["task_type"].toString()
-                    slots["Name"]?.let {taskName = JsonLiteral(slots["Name"].toString())}
-                    slots["Description"]?.let {taskDescription = JsonLiteral(slots["Description"].toString())}
-                    slots["sentiment"]?.let {taskSentiment = JsonLiteral(slots["sentiment"]?.toBoolean()!!)}
-                    slots["difficulty"]?. let {taskDifficulty = JsonLiteral(slots["difficulty"].toString())}
-                }
+                val taskType = activator.getCailaSlotOrNull("task_type").asJsonLiteralOr("Название задачи")
+                reactions.say("Перехожу...")
                 reactions.aimybox?.response?.action = "createTask"
-                reactions.aimybox?.response?.intent = taskType
-                taskName?.let { reactions.aimybox?.response?.data?.put("taskName", it) }
-                taskDescription?.let { reactions.aimybox?.response?.data?.put("taskDescription", it) }
-                taskSentiment?.let { reactions.aimybox?.response?.data?.put("taskSentiment", it) }
-                taskDifficulty?.let { reactions.aimybox?.response?.data?.put("taskDifficulty", it) }
+                reactions.aimybox?.response?.intent = taskType.toString()
+                reactions.aimybox?.response?.run {
+                    data["taskName"] = activator.getCailaSlot("Name").asJsonLiteralOr("чотатам")
+                    data["taskDescription"] = activator.getCailaSlotOrNull("Description").asJsonLiteralOr("Описание задачи")
+                    data["taskSentiment"] = activator.getCailaSlotBool("sentiment").asJsonLiteralOr(true)
+                    data["taskDifficulty"] = activator.getCailaSlotOrNull("difficulty").asJsonLiteralOr("easy")
+                }
             }
         }
 
-        state("fallback", noContext = true) {
-            activators {
-                catchAll()
-            }
-
-            action {
-                reactions.say("Я вас не понял")
-                reactions.sayRandom("Перейди в настройки", "Перейди в инфо", "Создай сложную задачу с названием Обед и описанием Ресторан", "Создай награду пирожок")
-            }
+        fallback {
+            reactions.say("Я вас не понял")
+            reactions.sayRandom(
+                "Перейди в настройки",
+                "Перейди в инфо",
+                "Создай сложную задачу с названием Обед и описанием Ресторан",
+                "Создай награду пирожок"
+            )
         }
     }
 }
+
+private fun ActivatorContext.getCailaSlot(k: String): String =
+    getCailaSlotOrNull(k) ?: error("Missing Caila slot for key: $k")
+
+private fun ActivatorContext.getCailaSlotOrNull(k: String): String? =
+    caila?.slots?.get(k)
+
+private fun ActivatorContext.getCailaSlotBool(k: String): Boolean? =
+    caila?.slots?.get(k)?.toBoolean() ?: error("Missing Caila slot for key $k")
+
+private fun String?.asJsonLiteralOr(other: String) = this?.let { JsonLiteral(this) } ?: JsonLiteral(other)
+private fun Boolean?.asJsonLiteralOr(other: Boolean) = this?.let { JsonLiteral(this) } ?: JsonLiteral(other)

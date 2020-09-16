@@ -41,8 +41,8 @@ object MainScenario : Scenario() {
                 reactions.aimybox?.response?.action = "createTask"
                 reactions.aimybox?.response?.intent = taskType.content
                 reactions.aimybox?.response?.run {
-                    data["taskName"] = activator.getCailaSlot("taskName").asJsonLiteralOr("Название задачи")
-                    data["taskDescription"] = activator.getCailaSlot("taskDescription").asJsonLiteralOr("Описание задачи")
+                    data["taskName"] = activator.getCailaSlot("taskName").asJsonLiteralOr("")
+                    data["taskDescription"] = activator.getCailaSlot("taskDescription").asJsonLiteralOr("")
                     data["taskSentiment"] = activator.getCailaSlotBool("taskSentiment").asJsonLiteralOr(true)
                     data["taskDifficulty"] = activator.getCailaSlot("taskDifficulty").asJsonLiteralOr("easy")
                 }

@@ -25,7 +25,7 @@ object MainScenario : Scenario() {
                 intent("changeView")
             }
             action {
-                reactions.say("Wait a sec...")
+                reactions.say("Перехожу...")
                 reactions.aimybox?.response?.action = "changeView"
                 reactions.aimybox?.response?.intent = activator.getCailaRequiredSlot("views")
             }

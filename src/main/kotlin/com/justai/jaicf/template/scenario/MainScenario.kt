@@ -25,7 +25,7 @@ object MainScenario : Scenario() {
                 intent("changeView")
             }
             action {
-                reactions.say("Перехожу...")
+                reactions.say("Wait a sec...")
                 reactions.aimybox?.response?.action = "changeView"
                 reactions.aimybox?.response?.intent = activator.getCailaRequiredSlot("views")
             }
@@ -37,7 +37,7 @@ object MainScenario : Scenario() {
             }
             action {
                 val taskType = activator.getCailaSlot("taskType").asJsonLiteralOr("")
-                reactions.say("Перехожу...")
+                reactions.say("Creating...")
                 reactions.aimybox?.response?.action = "createTask"
                 reactions.aimybox?.response?.intent = taskType.content
                 reactions.aimybox?.response?.run {
@@ -50,25 +50,25 @@ object MainScenario : Scenario() {
         }
 
         fallback {
-            reactions.say("Я вас не понял")
+            reactions.say("I didn't get that. Try: ")
             reactions.sayRandom(
-                "Перейди в настройки",
-                "Перейди в инфо",
-                "Создай сложную задачу с названием Обед и описанием Ресторан",
-                "Создай награду пирожок"
+                    "Go to settings",
+                    "Go to info",
+                    "Create a hard task with the name Dine and description Restaurant",
+                    "Create a cookie rewars"
             )
         }
     }
 }
 
 private fun ActivatorContext.getCailaRequiredSlot(k: String): String =
-    getCailaSlot(k) ?: error("Missing Caila slot for key: $k")
+        getCailaSlot(k) ?: error("Missing Caila slot for key: $k")
 
 private fun ActivatorContext.getCailaSlot(k: String): String? =
-    caila?.slots?.get(k)
+        caila?.slots?.get(k)
 
 private fun ActivatorContext.getCailaSlotBool(k: String): Boolean? =
-    caila?.slots?.get(k)?.toBoolean()
+        caila?.slots?.get(k)?.toBoolean()
 
 private fun String?.asJsonLiteralOr(other: String) = this?.let { JsonLiteral(this) } ?: JsonLiteral(other)
 private fun Boolean?.asJsonLiteralOr(other: Boolean) = this?.let { JsonLiteral(this) } ?: JsonLiteral(other)
